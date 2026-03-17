@@ -69,6 +69,30 @@ app.patch('/comunicados/:id/delete', async (req, res) => {
   }
 });
 
+app.put('/comunicados/:id', async (req, res) => {
+  const { id } = req.params;
+  const { titulo, descricao, data } = req.body;
+
+  try {
+    const result = await client.query(
+      `
+      UPDATE comunicados
+      SET titulo = $1,
+          descricao = $2,
+          data = $3
+      WHERE id = $4
+      RETURNING *
+      `,
+      [titulo, descricao, data, id],
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao atualizar comunicado' });
+  }
+});
+
 const PORT = 3000;
 
 async function start() {
