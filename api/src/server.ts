@@ -10,10 +10,36 @@ app.use(express.json());
 // Lista todos os comunicados
 
 app.get('/comunicados', async (req, res) => {
+  const { search, data } = req.query;
+
   try {
-    const result = await client.query(
-      "SELECT * FROM comunicados WHERE status = 'ativo' ORDER BY data DESC, id DESC",
-    );
+    let query = `
+      SELECT * FROM comunicados
+      WHERE status = 'ativo'
+    `;
+
+    const values: any[] = [];
+
+    // 🔎 busca por texto
+    if (search) {
+      values.push(`%${search}%`);
+      query += `
+        AND (titulo ILIKE $${values.length}
+        OR descricao ILIKE $${values.length})
+      `;
+    }
+
+    // 📅 filtro por data
+    if (data) {
+      values.push(data);
+      query += `
+        AND data = $${values.length}
+      `;
+    }
+
+    query += ` ORDER BY data DESC, id DESC`;
+
+    const result = await client.query(query, values);
 
     res.json(result.rows);
   } catch (error) {
