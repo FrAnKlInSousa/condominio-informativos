@@ -12,7 +12,7 @@ app.use(express.json());
 app.get('/comunicados', async (req, res) => {
   try {
     const result = await client.query(
-      'SELECT * FROM comunicados WHERE status = "ativo" ORDER BY data DESC, id DESC',
+      "SELECT * FROM comunicados WHERE status = 'ativo' ORDER BY data DESC, id DESC",
     );
 
     res.json(result.rows);
