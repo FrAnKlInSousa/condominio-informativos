@@ -13,7 +13,16 @@ export class ComunicadosService {
   createComunicado(data: { titulo: string; descricao: string; data: string }) {
     return this.http.post(this.apiUrl, data);
   }
+
   getComunicados(): Observable<Comunicado[]> {
     return this.http.get<Comunicado[]>(this.apiUrl);
+  }
+
+  deleteComunicado(id: number) {
+    return this.http.patch(`${this.apiUrl}/${id}/delete`, {});
+  }
+
+  updateComunicado(id: number, data: any) {
+    return this.http.put(`${this.apiUrl}/${id}`, data);
   }
 }

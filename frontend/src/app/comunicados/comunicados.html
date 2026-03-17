@@ -1,5 +1,8 @@
 <div class="container">
-  <app-comunicados-form (criado)="loadComunicados()"></app-comunicados-form>
+  <app-comunicados-form
+    [comunicado]="comunicadoSelecionado"
+    (criado)="loadComunicados()"
+  ></app-comunicados-form>
 
   <h2>Comunicados</h2>
 
@@ -8,6 +11,9 @@
       <h3>{{ c.titulo }}</h3>
       <p>{{ c.descricao }}</p>
       <small>{{ c.data }}</small>
+
+      <button (click)="deletar(c.id)">Deletar</button>
+      <button (click)="editar(c)">Editar</button>
     </div>
   }
 </div>

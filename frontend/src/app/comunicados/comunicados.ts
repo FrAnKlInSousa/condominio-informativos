@@ -19,6 +19,20 @@ export class Comunicados implements OnInit {
     private service: ComunicadosService,
     private cdr: ChangeDetectorRef,
   ) {}
+  deletar(id: number) {
+    this.service.deleteComunicado(id).subscribe({
+      next: () => {
+        this.loadComunicados();
+      },
+      error: (err) => console.error(err),
+    });
+  }
+
+  comunicadoSelecionado: Comunicado | null = null;
+
+  editar(c: Comunicado) {
+    this.comunicadoSelecionado = c;
+  }
 
   ngOnInit(): void {
     this.loadComunicados();

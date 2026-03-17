@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ComunicadosService } from '../comunicados/comunicados.service';
 
@@ -8,14 +8,23 @@ import { ComunicadosService } from '../comunicados/comunicados.service';
   imports: [FormsModule],
   templateUrl: './comunicados-form.html',
 })
-export class ComunicadosForm {
+export class ComunicadosForm implements OnChanges {
   titulo = '';
   descricao = '';
   data = '';
 
-  @Output() criado = new EventEmitter<void>(); // 👈 novo
+  @Input() comunicado: any;
+  @Output() criado = new EventEmitter<void>();
 
   constructor(private service: ComunicadosService) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['comunicado'] && this.comunicado) {
+      this.titulo = this.comunicado.titulo;
+      this.descricao = this.comunicado.descricao;
+      this.data = this.comunicado.data?.substring(0, 10);
+    }
+  }
 
   submit() {
     const payload = {
@@ -24,19 +33,29 @@ export class ComunicadosForm {
       data: this.data,
     };
 
-    this.service.createComunicado(payload).subscribe({
-      next: () => {
-        // limpa formulário
-        this.titulo = '';
-        this.descricao = '';
-        this.data = '';
+    if (this.comunicado?.id) {
+      this.service.updateComunicado(this.comunicado.id, payload).subscribe({
+        next: () => {
+          this.resetForm();
+          this.criado.emit();
+        },
+        error: (err) => console.error(err),
+      });
+    } else {
+      this.service.createComunicado(payload).subscribe({
+        next: () => {
+          this.resetForm();
+          this.criado.emit();
+        },
+        error: (err) => console.error(err),
+      });
+    }
+  }
 
-        // 🔥 avisa o componente pai
-        this.criado.emit();
-      },
-      error: (err) => {
-        console.error(err);
-      },
-    });
+  resetForm() {
+    this.titulo = '';
+    this.descricao = '';
+    this.data = '';
+    this.comunicado = null;
   }
 }
