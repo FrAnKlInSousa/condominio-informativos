@@ -4,16 +4,19 @@ import { ComunicadosService } from './comunicados.service';
 import { Comunicado } from '../models/comunicado';
 import { ChangeDetectorRef } from '@angular/core';
 import { ComunicadosForm } from '../comunicados-form/comunicados-form';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-comunicados',
   standalone: true,
-  imports: [CommonModule, ComunicadosForm],
+  imports: [CommonModule, ComunicadosForm, FormsModule],
   templateUrl: './comunicados.html',
   styleUrl: './comunicados.css',
 })
 export class Comunicados implements OnInit {
   comunicados: Comunicado[] = [];
+  search = '';
+  dataFiltro = '';
 
   constructor(
     private service: ComunicadosService,
@@ -32,6 +35,22 @@ export class Comunicados implements OnInit {
 
   editar(c: Comunicado) {
     this.comunicadoSelecionado = c;
+  }
+
+  filtrar() {
+    this.service.getComunicadosFiltrados(this.search, this.dataFiltro).subscribe({
+      next: (data) => {
+        this.comunicados = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error(err),
+    });
+  }
+
+  limparFiltro() {
+    this.search = '';
+    this.dataFiltro = '';
+    this.loadComunicados();
   }
 
   ngOnInit(): void {
