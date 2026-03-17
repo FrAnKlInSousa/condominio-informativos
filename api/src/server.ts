@@ -12,7 +12,7 @@ app.use(express.json());
 app.get('/comunicados', async (req, res) => {
   try {
     const result = await client.query(
-      'SELECT * FROM comunicados ORDER BY data DESC, id DESC',
+      'SELECT * FROM comunicados WHERE status = "ativo" ORDER BY data DESC, id DESC',
     );
 
     res.json(result.rows);
@@ -48,6 +48,24 @@ app.post('/comunicados', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Erro ao criar comunicado' });
+  }
+});
+
+app.patch('/comunicados/:id/delete', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await client.query(
+      `UPDATE comunicados
+       SET status = 'deletado'
+       WHERE id = $1`,
+      [id],
+    );
+
+    res.status(200).json({ message: 'Deletado com sucesso' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao deletar comunicado' });
   }
 });
 
