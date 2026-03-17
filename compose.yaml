@@ -1,0 +1,18 @@
+services:
+  database:
+    image: postgres:18.3-alpine3.23
+    container_name: container_condominio
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: condominio
+      POSTGRES_PASSWORD: local
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
