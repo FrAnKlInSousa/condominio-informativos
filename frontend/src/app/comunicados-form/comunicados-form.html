@@ -1,0 +1,13 @@
+<div class="form-container">
+  <h3>Novo Comunicado</h3>
+
+  <form (ngSubmit)="submit()">
+    <input type="text" placeholder="Título" [(ngModel)]="titulo" name="titulo" required />
+
+    <textarea placeholder="Descrição" [(ngModel)]="descricao" name="descricao"></textarea>
+
+    <input type="date" [(ngModel)]="data" name="data" required />
+
+    <button type="submit">Salvar</button>
+  </form>
+</div>
