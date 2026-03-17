@@ -1,0 +1,20 @@
+# Node
+node_modules/
+dist/
+
+# Env
+.env
+
+# Logs
+npm-debug.log*
+
+# Angular
+.angular/
+.cache/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
