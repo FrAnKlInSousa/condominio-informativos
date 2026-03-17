@@ -14,23 +14,22 @@ import { ComunicadosForm } from '../comunicados-form/comunicados-form';
 })
 export class Comunicados implements OnInit {
   comunicados: Comunicado[] = [];
-  loadComunicados() {
-    this.service.getComunicados().subscribe((data) => {
-      this.comunicados = data;
-    });
-  }
+
   constructor(
     private service: ComunicadosService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
+    this.loadComunicados();
+  }
+
+  loadComunicados() {
     this.service.getComunicados().subscribe({
       next: (data) => {
-        console.log('dados:', data);
+        console.log('reload:', data);
         this.comunicados = data;
-        this.cdr.detectChanges(); // 👈 ESSENCIAL
-        this.loadComunicados();
+        this.cdr.detectChanges(); // mantém por enquanto
       },
       error: (err) => {
         console.error(err);

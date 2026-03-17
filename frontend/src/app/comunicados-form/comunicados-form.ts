@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ComunicadosService } from '../comunicados/comunicados.service';
 
@@ -13,6 +13,8 @@ export class ComunicadosForm {
   descricao = '';
   data = '';
 
+  @Output() criado = new EventEmitter<void>(); // 👈 novo
+
   constructor(private service: ComunicadosService) {}
 
   submit() {
@@ -24,12 +26,13 @@ export class ComunicadosForm {
 
     this.service.createComunicado(payload).subscribe({
       next: () => {
-        console.log('Criado com sucesso');
-
         // limpa formulário
         this.titulo = '';
         this.descricao = '';
         this.data = '';
+
+        // 🔥 avisa o componente pai
+        this.criado.emit();
       },
       error: (err) => {
         console.error(err);
