@@ -25,4 +25,13 @@ export class ComunicadosService {
   updateComunicado(id: number, data: any) {
     return this.http.put(`${this.apiUrl}/${id}`, data);
   }
+
+  getComunicadosFiltrados(search?: string, data?: string) {
+    let params: any = {};
+
+    if (search) params.search = search;
+    if (data) params.data = data;
+
+    return this.http.get<Comunicado[]>(this.apiUrl, { params });
+  }
 }
