@@ -65,6 +65,14 @@ export class Comunicados implements OnInit {
 
   editar(c: Comunicado) {
     this.comunicadoSelecionado = c;
+
+    // 👇 espera o Angular renderizar e então faz scroll
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }, 0);
   }
 
   filtrar() {
