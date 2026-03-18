@@ -76,6 +76,34 @@ button.cancel:hover {
   background: #d1d5db;
 }
 
+/* variações */
+button.btn-danger {
+  background: #ef4444;
+}
+
+button.btn-danger:hover {
+  background: #dc2626;
+}
+
+button.btn-secondary {
+  background: #e5e7eb;
+  color: #333;
+}
+
+button.btn-secondary:hover {
+  background: #d1d5db;
+}
+
+/* estado */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button.loading {
+  pointer-events: none;
+}
+
 .form {
   display: flex;
   flex-direction: column;
