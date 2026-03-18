@@ -6,6 +6,17 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+// essa parte resolve problema com cache / req 304
+// TODO remover antes de ir pra produção
+app.use((req, res, next) => {
+  res.setHeader(
+    'Cache-Control',
+    'no-store, no-cache, must-revalidate, proxy-revalidate',
+  );
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
 
 // Lista todos os comunicados
 
@@ -21,12 +32,12 @@ app.get('/comunicados', async (req, res) => {
     const values: any[] = [];
 
     // 🔎 busca por texto
-    if (search) {
-      values.push(`%${search}%`);
+    if (search && String(search).trim() !== '') {
+      values.push(`%${String(search).trim()}%`);
       query += `
-        AND (titulo ILIKE $${values.length}
-        OR descricao ILIKE $${values.length})
-      `;
+    AND (titulo ILIKE $${values.length}
+    OR descricao ILIKE $${values.length})
+  `;
     }
 
     // 📅 filtro por data
@@ -38,7 +49,6 @@ app.get('/comunicados', async (req, res) => {
     }
 
     query += ` ORDER BY data DESC, id DESC`;
-
     const result = await client.query(query, values);
 
     res.json(result.rows);
