@@ -26,8 +26,11 @@ export class ComunicadosService {
     return this.http.put(`${this.apiUrl}/${id}`, data);
   }
 
-  getComunicadosFiltrados(search?: string, data?: string) {
-    let params: any = {};
+  getComunicadosFiltrados(search?: string, data?: string, page: number = 1, limit: number = 5) {
+    let params: any = {
+      page,
+      limit,
+    };
 
     if (search) params.search = search;
     if (data) params.data = data;

@@ -21,7 +21,12 @@ app.use((req, res, next) => {
 // Lista todos os comunicados
 
 app.get('/comunicados', async (req, res) => {
-  const { search, data } = req.query;
+  const search = req.query.search as string;
+  const data = req.query.data as string;
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 5;
+
+  const offset = (page - 1) * limit;
 
   try {
     let query = `
@@ -31,24 +36,31 @@ app.get('/comunicados', async (req, res) => {
 
     const values: any[] = [];
 
-    // 🔎 busca por texto
-    if (search && String(search).trim() !== '') {
-      values.push(`%${String(search).trim()}%`);
+    if (search && search.trim() !== '') {
+      values.push(`%${search.trim()}%`);
       query += `
-    AND (titulo ILIKE $${values.length}
-    OR descricao ILIKE $${values.length})
-  `;
+        AND (titulo ILIKE $${values.length}
+        OR descricao ILIKE $${values.length})
+      `;
     }
 
-    // 📅 filtro por data
-    if (data) {
+    if (data && data.trim() !== '') {
       values.push(data);
       query += `
         AND data = $${values.length}
       `;
     }
 
-    query += ` ORDER BY data DESC, id DESC`;
+    // 👉 paginação
+    values.push(limit);
+    values.push(offset);
+
+    query += `
+      ORDER BY data DESC, id DESC
+      LIMIT $${values.length - 1}
+      OFFSET $${values.length}
+    `;
+
     const result = await client.query(query, values);
 
     res.json(result.rows);

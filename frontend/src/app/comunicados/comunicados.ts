@@ -21,6 +21,8 @@ export class Comunicados implements OnInit {
   dataFiltro = '';
   mensagem = '';
   mostrarToast = false;
+  paginaAtual = 1;
+  limite = 5;
 
   private searchSubject = new Subject<void>();
 
@@ -49,13 +51,15 @@ export class Comunicados implements OnInit {
   }
 
   filtrar() {
-    this.service.getComunicadosFiltrados(this.search, this.dataFiltro).subscribe({
-      next: (data) => {
-        this.comunicados = data;
-        this.cdr.detectChanges();
-      },
-      error: (err) => console.error(err),
-    });
+    this.service
+      .getComunicadosFiltrados(this.search, this.dataFiltro, this.paginaAtual, this.limite)
+      .subscribe({
+        next: (data) => {
+          this.comunicados = data;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error(err),
+      });
   }
 
   limparFiltro() {
@@ -72,15 +76,15 @@ export class Comunicados implements OnInit {
   }
 
   loadComunicados() {
-    this.service.getComunicados().subscribe({
-      next: (data) => {
-        this.comunicados = data;
-        this.cdr.detectChanges(); // mantém por enquanto
-      },
-      error: (err) => {
-        console.error(err);
-      },
-    });
+    this.service
+      .getComunicadosFiltrados(this.search, this.dataFiltro, this.paginaAtual, this.limite)
+      .subscribe({
+        next: (data) => {
+          this.comunicados = data;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error(err),
+      });
   }
 
   onSearchChange() {
@@ -117,5 +121,17 @@ export class Comunicados implements OnInit {
     }
 
     this.comunicadoSelecionado = null;
+  }
+
+  proximaPagina() {
+    this.paginaAtual++;
+    this.loadComunicados();
+  }
+
+  paginaAnterior() {
+    if (this.paginaAtual > 1) {
+      this.paginaAtual--;
+      this.loadComunicados();
+    }
   }
 }
