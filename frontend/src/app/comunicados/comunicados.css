@@ -194,3 +194,7 @@ hr {
 
   margin-top: 20px;
 }
+
+.paginacao button.ativo {
+  background: #111827;
+}

@@ -35,6 +35,6 @@ export class ComunicadosService {
     if (search) params.search = search;
     if (data) params.data = data;
 
-    return this.http.get<Comunicado[]>(this.apiUrl, { params });
+    return this.http.get<any>(this.apiUrl, { params });
   }
 }

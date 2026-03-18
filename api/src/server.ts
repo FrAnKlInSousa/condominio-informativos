@@ -29,8 +29,8 @@ app.get('/comunicados', async (req, res) => {
   const offset = (page - 1) * limit;
 
   try {
-    let query = `
-      SELECT * FROM comunicados
+    let baseQuery = `
+      FROM comunicados
       WHERE status = 'ativo'
     `;
 
@@ -38,7 +38,7 @@ app.get('/comunicados', async (req, res) => {
 
     if (search && search.trim() !== '') {
       values.push(`%${search.trim()}%`);
-      query += `
+      baseQuery += `
         AND (titulo ILIKE $${values.length}
         OR descricao ILIKE $${values.length})
       `;
@@ -46,24 +46,40 @@ app.get('/comunicados', async (req, res) => {
 
     if (data && data.trim() !== '') {
       values.push(data);
-      query += `
+      baseQuery += `
         AND data = $${values.length}
       `;
     }
 
-    // 👉 paginação
-    values.push(limit);
-    values.push(offset);
+    // 🔥 TOTAL (usa só filtros)
+    const countResult = await client.query(
+      `SELECT COUNT(*) ${baseQuery}`,
+      values,
+    );
 
-    query += `
-      ORDER BY data DESC, id DESC
-      LIMIT $${values.length - 1}
-      OFFSET $${values.length}
-    `;
+    const total = Number(countResult.rows[0].count);
 
-    const result = await client.query(query, values);
+    // 🔥 LISTA (copia valores antes de modificar)
+    const dataValues = [...values];
 
-    res.json(result.rows);
+    dataValues.push(limit);
+    dataValues.push(offset);
+
+    const dataQuery = `
+  SELECT * ${baseQuery}
+  ORDER BY data DESC, id DESC
+  LIMIT $${dataValues.length - 1}
+  OFFSET $${dataValues.length}
+`;
+
+    const result = await client.query(dataQuery, dataValues);
+
+    res.json({
+      data: result.rows,
+      total,
+      page,
+      limit,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Erro ao buscar comunicados' });

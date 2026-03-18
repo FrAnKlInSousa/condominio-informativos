@@ -23,6 +23,8 @@ export class Comunicados implements OnInit {
   mostrarToast = false;
   paginaAtual = 1;
   limite = 5;
+  total = 0;
+  totalPaginas = 0;
   deletandoIds = new Set<number>();
   confirmandoDeleteId: number | null = null;
 
@@ -76,20 +78,15 @@ export class Comunicados implements OnInit {
   }
 
   filtrar() {
-    this.service
-      .getComunicadosFiltrados(this.search, this.dataFiltro, this.paginaAtual, this.limite)
-      .subscribe({
-        next: (data) => {
-          this.comunicados = data;
-          this.cdr.detectChanges();
-        },
-        error: (err) => console.error(err),
-      });
+    this.paginaAtual = 1;
+    this.loadComunicados(); // 👈 centraliza tudo aqui
   }
 
   limparFiltro() {
     this.search = '';
     this.dataFiltro = '';
+    this.paginaAtual = 1; // 👈 também aqui
+
     this.loadComunicados();
   }
 
@@ -104,8 +101,11 @@ export class Comunicados implements OnInit {
     this.service
       .getComunicadosFiltrados(this.search, this.dataFiltro, this.paginaAtual, this.limite)
       .subscribe({
-        next: (data) => {
-          this.comunicados = data;
+        next: (res) => {
+          this.comunicados = res.data;
+          this.total = res.total;
+          this.totalPaginas = Math.ceil(this.total / this.limite);
+
           this.cdr.detectChanges();
         },
         error: (err) => console.error(err),
@@ -162,5 +162,23 @@ export class Comunicados implements OnInit {
 
   cancelarDelete() {
     this.confirmandoDeleteId = null;
+  }
+
+  getPaginas(): number[] {
+    const paginas: number[] = [];
+
+    const inicio = Math.max(1, this.paginaAtual - 2);
+    const fim = Math.min(this.totalPaginas, this.paginaAtual + 2);
+
+    for (let i = inicio; i <= fim; i++) {
+      paginas.push(i);
+    }
+
+    return paginas;
+  }
+
+  irParaPagina(pagina: number) {
+    this.paginaAtual = pagina;
+    this.loadComunicados();
   }
 }

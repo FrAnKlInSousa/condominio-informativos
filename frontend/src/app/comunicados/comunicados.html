@@ -52,11 +52,16 @@
       </div>
     </div>
   }
+
   <div class="paginacao">
-    <button (click)="paginaAnterior()">⬅ Anterior</button>
+    <button (click)="paginaAnterior()" [disabled]="paginaAtual === 1">⬅</button>
 
-    <span>Página {{ paginaAtual }}</span>
+    @for (p of getPaginas(); track p) {
+      <button (click)="irParaPagina(p)" [class.ativo]="p === paginaAtual">
+        {{ p }}
+      </button>
+    }
 
-    <button (click)="proximaPagina()">Próxima ➡</button>
+    <button (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas">➡</button>
   </div>
 </div>
