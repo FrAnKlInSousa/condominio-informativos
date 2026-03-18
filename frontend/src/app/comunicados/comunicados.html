@@ -6,7 +6,7 @@
 
   <h2>Comunicados</h2>
   <div class="filtros">
-    <input type="text" placeholder="Buscar..." [(ngModel)]="search" />
+    <input type="text" placeholder="Buscar..." [(ngModel)]="search" (input)="onSearchChange()" />
 
     <input type="date" [(ngModel)]="dataFiltro" />
 

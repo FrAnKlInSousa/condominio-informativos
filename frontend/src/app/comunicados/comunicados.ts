@@ -5,6 +5,8 @@ import { Comunicado } from '../models/comunicado';
 import { ChangeDetectorRef } from '@angular/core';
 import { ComunicadosForm } from '../comunicados-form/comunicados-form';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-comunicados',
@@ -17,6 +19,7 @@ export class Comunicados implements OnInit {
   comunicados: Comunicado[] = [];
   search = '';
   dataFiltro = '';
+  private searchSubject = new Subject<void>();
 
   constructor(
     private service: ComunicadosService,
@@ -55,6 +58,9 @@ export class Comunicados implements OnInit {
 
   ngOnInit(): void {
     this.loadComunicados();
+    this.searchSubject.pipe(debounceTime(700)).subscribe(() => {
+      this.filtrar();
+    });
   }
 
   loadComunicados() {
@@ -67,5 +73,9 @@ export class Comunicados implements OnInit {
         console.error(err);
       },
     });
+  }
+
+  onSearchChange() {
+    this.searchSubject.next();
   }
 }
