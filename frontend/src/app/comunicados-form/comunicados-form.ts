@@ -19,10 +19,14 @@ export class ComunicadosForm implements OnChanges {
   constructor(private service: ComunicadosService) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['comunicado'] && this.comunicado) {
-      this.titulo = this.comunicado.titulo;
-      this.descricao = this.comunicado.descricao;
-      this.data = this.comunicado.data?.substring(0, 10);
+    if (changes['comunicado']) {
+      if (this.comunicado) {
+        this.titulo = this.comunicado.titulo;
+        this.descricao = this.comunicado.descricao;
+        this.data = this.comunicado.data?.substring(0, 10);
+      } else {
+        this.resetForm(); // 👈 ESSA LINHA resolve seu problema
+      }
     }
   }
 
@@ -56,6 +60,5 @@ export class ComunicadosForm implements OnChanges {
     this.titulo = '';
     this.descricao = '';
     this.data = '';
-    this.comunicado = null;
   }
 }
