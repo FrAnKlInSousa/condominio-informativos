@@ -5,7 +5,7 @@
 
   <input type="date" [(ngModel)]="data" name="data" required />
 
-  <button type="submit" [disabled]="isLoading">
+  <button type="submit" class="btn" [disabled]="isLoading">
     {{ isLoading ? 'Salvando...' : comunicado ? 'Atualizar' : 'Criar' }}
   </button>
 </form>

@@ -19,7 +19,7 @@
       (criado)="onCriado()"
     ></app-comunicados-form>
 
-    <button class="cancel" *ngIf="comunicadoSelecionado" (click)="cancelarEdicao()">
+    <button class="btn-secondary cancel" *ngIf="comunicadoSelecionado" (click)="cancelarEdicao()">
       Cancelar edição
     </button>
   </div>
@@ -38,8 +38,10 @@
       </small>
 
       <div class="acoes">
-        <button (click)="editar(c)">Editar</button>
-        <button (click)="deletar(c.id)">Deletar</button>
+        <button class="btn" (click)="editar(c)">Editar</button>
+        <button class="btn-danger" (click)="deletar(c.id)" [disabled]="deletandoIds.has(c.id)">
+          {{ deletandoIds.has(c.id) ? 'Deletando...' : 'Deletar' }}
+        </button>
       </div>
     </div>
   }

@@ -23,6 +23,7 @@ export class Comunicados implements OnInit {
   mostrarToast = false;
   paginaAtual = 1;
   limite = 5;
+  deletandoIds = new Set<number>();
 
   private searchSubject = new Subject<void>();
 
@@ -32,15 +33,23 @@ export class Comunicados implements OnInit {
   ) {}
 
   deletar(id: number) {
+    if (this.deletandoIds.has(id)) return; // 👈 trava clique duplo
+
     const confirmar = confirm('Tem certeza que deseja deletar?');
     if (!confirmar) return;
+
+    this.deletandoIds.add(id);
 
     this.service.deleteComunicado(id).subscribe({
       next: () => {
         this.loadComunicados();
         this.mostrarMensagem('Comunicado deletado');
+        this.deletandoIds.delete(id);
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        console.error(err);
+        this.deletandoIds.delete(id);
+      },
     });
   }
 
