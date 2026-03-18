@@ -12,6 +12,7 @@ export class ComunicadosForm implements OnChanges {
   titulo = '';
   descricao = '';
   data = '';
+  isLoading = false;
 
   @Input() comunicado: any;
   @Output() criado = new EventEmitter<void>();
@@ -31,29 +32,31 @@ export class ComunicadosForm implements OnChanges {
   }
 
   submit() {
+    if (this.isLoading) return; // 👈 trava múltiplos cliques
+
+    this.isLoading = true;
+
     const payload = {
       titulo: this.titulo,
       descricao: this.descricao,
       data: this.data,
     };
 
-    if (this.comunicado?.id) {
-      this.service.updateComunicado(this.comunicado.id, payload).subscribe({
-        next: () => {
-          this.resetForm();
-          this.criado.emit();
-        },
-        error: (err) => console.error(err),
-      });
-    } else {
-      this.service.createComunicado(payload).subscribe({
-        next: () => {
-          this.resetForm();
-          this.criado.emit();
-        },
-        error: (err) => console.error(err),
-      });
-    }
+    const request = this.comunicado?.id
+      ? this.service.updateComunicado(this.comunicado.id, payload)
+      : this.service.createComunicado(payload);
+
+    request.subscribe({
+      next: () => {
+        this.resetForm();
+        this.criado.emit();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.isLoading = false;
+      },
+    });
   }
 
   resetForm() {
