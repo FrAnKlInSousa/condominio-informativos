@@ -60,7 +60,6 @@ export class Comunicados implements OnInit {
   loadComunicados() {
     this.service.getComunicados().subscribe({
       next: (data) => {
-        console.log('reload:', data);
         this.comunicados = data;
         this.cdr.detectChanges(); // mantém por enquanto
       },
