@@ -1,26 +1,40 @@
 <div class="container">
+  <div class="filtros">
+    <input type="text" placeholder="Buscar..." [(ngModel)]="search" (input)="onSearchChange()" />
+
+    <input type="date" [(ngModel)]="dataFiltro" (change)="filtrar()" />
+
+    <button (click)="limparFiltro()">Limpar</button>
+  </div>
+
+  <h2 *ngIf="!comunicadoSelecionado">Novo Comunicado</h2>
+  <h2 *ngIf="comunicadoSelecionado">Editando Comunicado</h2>
+
   <app-comunicados-form
     [comunicado]="comunicadoSelecionado"
     (criado)="loadComunicados()"
   ></app-comunicados-form>
 
+  <button *ngIf="comunicadoSelecionado" (click)="cancelarEdicao()">Cancelar edição</button>
+
+  <hr />
+
   <h2>Comunicados</h2>
-  <div class="filtros">
-    <input type="text" placeholder="Buscar..." [(ngModel)]="search" (input)="onSearchChange()" />
 
-    <input type="date" [(ngModel)]="dataFiltro" />
-
-    <button (click)="filtrar()">Filtrar</button>
-    <button (click)="limparFiltro()">Limpar</button>
-  </div>
   @for (c of comunicados; track c.id) {
     <div class="card">
       <h3>{{ c.titulo }}</h3>
-      <p>{{ c.descricao }}</p>
-      <small>{{ c.data }}</small>
 
-      <button (click)="deletar(c.id)">Deletar</button>
-      <button (click)="editar(c)">Editar</button>
+      <p>{{ c.descricao }}</p>
+
+      <small>
+        {{ c.data | date: 'dd/MM/yyyy' }}
+      </small>
+
+      <div class="acoes">
+        <button (click)="editar(c)">Editar</button>
+        <button (click)="deletar(c.id)">Deletar</button>
+      </div>
     </div>
   }
 </div>
