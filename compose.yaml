@@ -1,6 +1,6 @@
 services:
   database:
-    image: postgres:18.3-alpine3.23
+    image: postgres:17.9-alpine3.23
     container_name: container_condominio
 
     environment:
@@ -16,3 +16,4 @@ services:
 
 volumes:
   postgres_data:
+    name: condominio_postgres_data
