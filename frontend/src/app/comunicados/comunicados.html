@@ -1,4 +1,7 @@
 <div class="container">
+  <div class="toast" *ngIf="mostrarToast">
+    {{ mensagem }}
+  </div>
   <div class="filtros">
     <input type="text" placeholder="Buscar..." [(ngModel)]="search" (input)="onSearchChange()" />
 
@@ -9,10 +12,11 @@
 
   <h2 *ngIf="!comunicadoSelecionado">Novo Comunicado</h2>
   <h2 *ngIf="comunicadoSelecionado">Editando Comunicado</h2>
+
   <div [class.editando]="comunicadoSelecionado">
     <app-comunicados-form
       [comunicado]="comunicadoSelecionado"
-      (criado)="loadComunicados()"
+      (criado)="onCriado()"
     ></app-comunicados-form>
 
     <button class="cancel" *ngIf="comunicadoSelecionado" (click)="cancelarEdicao()">

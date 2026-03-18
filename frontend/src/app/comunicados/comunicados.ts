@@ -19,6 +19,9 @@ export class Comunicados implements OnInit {
   comunicados: Comunicado[] = [];
   search = '';
   dataFiltro = '';
+  mensagem = '';
+  mostrarToast = false;
+
   private searchSubject = new Subject<void>();
 
   constructor(
@@ -28,11 +31,13 @@ export class Comunicados implements OnInit {
 
   deletar(id: number) {
     const confirmar = confirm('Tem certeza que deseja deletar?');
-
     if (!confirmar) return;
 
     this.service.deleteComunicado(id).subscribe({
-      next: () => this.loadComunicados(),
+      next: () => {
+        this.loadComunicados();
+        this.mostrarMensagem('Comunicado deletado');
+      },
       error: (err) => console.error(err),
     });
   }
@@ -83,6 +88,34 @@ export class Comunicados implements OnInit {
   }
 
   cancelarEdicao() {
+    this.comunicadoSelecionado = null;
+  }
+
+  private timeoutId: any;
+
+  mostrarMensagem(texto: string) {
+    this.mensagem = texto;
+    this.mostrarToast = true;
+
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
+
+    this.timeoutId = setTimeout(() => {
+      this.mostrarToast = false;
+      this.cdr.detectChanges();
+    }, 1500);
+  }
+
+  onCriado() {
+    this.loadComunicados();
+
+    if (this.comunicadoSelecionado) {
+      this.mostrarMensagem('Comunicado atualizado');
+    } else {
+      this.mostrarMensagem('Comunicado criado');
+    }
+
     this.comunicadoSelecionado = null;
   }
 }
