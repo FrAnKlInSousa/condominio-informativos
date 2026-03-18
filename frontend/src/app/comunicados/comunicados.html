@@ -9,14 +9,16 @@
 
   <h2 *ngIf="!comunicadoSelecionado">Novo Comunicado</h2>
   <h2 *ngIf="comunicadoSelecionado">Editando Comunicado</h2>
+  <div [class.editando]="comunicadoSelecionado">
+    <app-comunicados-form
+      [comunicado]="comunicadoSelecionado"
+      (criado)="loadComunicados()"
+    ></app-comunicados-form>
 
-  <app-comunicados-form
-    [comunicado]="comunicadoSelecionado"
-    (criado)="loadComunicados()"
-  ></app-comunicados-form>
-
-  <button *ngIf="comunicadoSelecionado" (click)="cancelarEdicao()">Cancelar edição</button>
-
+    <button class="cancel" *ngIf="comunicadoSelecionado" (click)="cancelarEdicao()">
+      Cancelar edição
+    </button>
+  </div>
   <hr />
 
   <h2>Comunicados</h2>
