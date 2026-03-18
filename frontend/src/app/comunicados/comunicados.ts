@@ -25,11 +25,14 @@ export class Comunicados implements OnInit {
     private service: ComunicadosService,
     private cdr: ChangeDetectorRef,
   ) {}
+
   deletar(id: number) {
+    const confirmar = confirm('Tem certeza que deseja deletar?');
+
+    if (!confirmar) return;
+
     this.service.deleteComunicado(id).subscribe({
-      next: () => {
-        this.loadComunicados();
-      },
+      next: () => this.loadComunicados(),
       error: (err) => console.error(err),
     });
   }
@@ -77,5 +80,9 @@ export class Comunicados implements OnInit {
 
   onSearchChange() {
     this.searchSubject.next();
+  }
+
+  cancelarEdicao() {
+    this.comunicadoSelecionado = null;
   }
 }
