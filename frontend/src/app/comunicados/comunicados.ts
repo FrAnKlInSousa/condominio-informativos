@@ -24,6 +24,7 @@ export class Comunicados implements OnInit {
   paginaAtual = 1;
   limite = 5;
   deletandoIds = new Set<number>();
+  confirmandoDeleteId: number | null = null;
 
   private searchSubject = new Subject<void>();
 
@@ -33,10 +34,14 @@ export class Comunicados implements OnInit {
   ) {}
 
   deletar(id: number) {
-    if (this.deletandoIds.has(id)) return; // 👈 trava clique duplo
+    // 👇 primeiro clique só ativa confirmação
+    if (this.confirmandoDeleteId !== id) {
+      this.confirmandoDeleteId = id;
+      return;
+    }
 
-    const confirmar = confirm('Tem certeza que deseja deletar?');
-    if (!confirmar) return;
+    // 👇 evita múltiplos cliques durante request
+    if (this.deletandoIds.has(id)) return;
 
     this.deletandoIds.add(id);
 
@@ -44,11 +49,14 @@ export class Comunicados implements OnInit {
       next: () => {
         this.loadComunicados();
         this.mostrarMensagem('Comunicado deletado');
+
         this.deletandoIds.delete(id);
+        this.confirmandoDeleteId = null;
       },
       error: (err) => {
         console.error(err);
         this.deletandoIds.delete(id);
+        this.confirmandoDeleteId = null;
       },
     });
   }
@@ -142,5 +150,9 @@ export class Comunicados implements OnInit {
       this.paginaAtual--;
       this.loadComunicados();
     }
+  }
+
+  cancelarDelete() {
+    this.confirmandoDeleteId = null;
   }
 }

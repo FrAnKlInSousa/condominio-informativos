@@ -39,9 +39,16 @@
 
       <div class="acoes">
         <button class="btn" (click)="editar(c)">Editar</button>
-        <button class="btn-danger" (click)="deletar(c.id)" [disabled]="deletandoIds.has(c.id)">
-          {{ deletandoIds.has(c.id) ? 'Deletando...' : 'Deletar' }}
-        </button>
+
+        @if (confirmandoDeleteId === c.id) {
+          <button class="btn-danger" (click)="deletar(c.id)" [disabled]="deletandoIds.has(c.id)">
+            {{ deletandoIds.has(c.id) ? 'Deletando...' : 'Confirmar' }}
+          </button>
+
+          <button class="btn-secondary" (click)="cancelarDelete()">Cancelar</button>
+        } @else {
+          <button class="btn-danger" (click)="deletar(c.id)">Deletar</button>
+        }
       </div>
     </div>
   }
